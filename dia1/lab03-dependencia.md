@@ -172,3 +172,4 @@ Route::middleware([])->get('/greet', function (Request $request) {
 ```
 
 ![image-20200416185653216](assets/image-20200416185653216.png)
+
