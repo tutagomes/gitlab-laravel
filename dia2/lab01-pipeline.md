@@ -16,6 +16,49 @@ Exemplo:
 
 
 
+```yaml
+# Official framework image. Look for the different tagged releases at:
+# https://hub.docker.com/r/library/php
+image: php:latest
+
+# Pick zero or more services to be used on all builds.
+# Only needed when using a docker container to run your tests in.
+# Check out: http://docs.gitlab.com/ce/ci/docker/using_docker_images.html#what-is-a-service
+services:
+  - mysql:latest
+
+variables:
+  MYSQL_DATABASE: workflow
+  MYSQL_ROOT_PASSWORD: secret
+
+# This folder is cached between builds
+# http://docs.gitlab.com/ce/ci/yaml/README.html#cache
+cache:
+  paths:
+    - vendor/
+    - node_modules/
+
+# This is a basic example for a gem or script which doesn't use
+# services such as redis or postgres
+before_script:
+  # navigate to project folder
+  - cd website
+  - curl -sS https://getcomposer.org/installer | php
+  - php composer.phar install
+  - cp .env.testing .env
+  - php artisan key:generate
+  - php artisan config:cache
+  - php artisan migrate
+  - php artisan db:seed
+
+test:
+  script:
+    # run laravel tests
+    - php vendor/bin/phpunit --coverage-text --colors=never
+```
+
+
+
 ## 1.2 Criando uma pipeline NPM
 
 Assim como o Composer, podemos utilizar o NPM para gerenciar as dependências do nosso projeto Node.
